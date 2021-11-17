@@ -7,8 +7,8 @@ using Repository.Persistence;
 namespace EFCoreDemo {
     class Program {
         static void Main(string[] args) {
-            DoCodeFirst();
-            //DoQueries();
+            //DoCodeFirst();
+            DoQueries();
             //DoLoading();
             //DoEdit();
             //DoUnitOfWork();
@@ -154,20 +154,31 @@ namespace EFCoreDemo {
                     Console.WriteLine($"Kurs: {c.Name}, Autor: {c.Author}");
                 }
 
-
-                // Group: eine Liste von Objekte in eine oder mehrere Gruppen aufteilen
+                // Group: Database group (selektiert nur Key und Count = Aggragate-Function)
                 var query3 =
                     from c in context.Courses
                     group c by c.Level
                     into g
-                    select g;
+                    select new { Key = g.Key, Count = g.Count() };
                 foreach (var group in query3) {
-                    Console.WriteLine($"{group.Key} ({group.Count()})");
-
-                    foreach (var c in group) {
-                        Console.WriteLine($"\t{c.Title}");
-                    }
+                    Console.WriteLine($"{group.Key} ({group.Count})");
                 }
+
+
+                // Group: eine Liste von Objekte in eine oder mehrere Gruppen aufteilen
+                // -> funktioniert bei EFCore nicht mehr
+                //var query31 =
+                //    from c in context.Courses
+                //    group c by c.Level
+                //    into g
+                //    select g;
+                //foreach (var group in query31) {
+                //    Console.WriteLine($"{group.Key} ({group.Count()})");
+
+                //    foreach (var c in group) {
+                //        Console.WriteLine($"\t{c.Title}");
+                //    }
+                //}
 
 
                 // Inner Join 
