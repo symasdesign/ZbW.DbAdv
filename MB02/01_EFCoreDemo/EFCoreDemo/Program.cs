@@ -166,7 +166,8 @@ namespace EFCoreDemo {
 
 
                 // Group: eine Liste von Objekte in eine oder mehrere Gruppen aufteilen
-                // -> funktioniert bei EFCore nicht mehr
+                // -> funktioniert bei EFCore nicht mehr, Objekte herunterladen und dann 
+                //    lokal gruppieren -> siehe LINQ
                 //var query31 =
                 //    from c in context.Courses
                 //    group c by c.Level
