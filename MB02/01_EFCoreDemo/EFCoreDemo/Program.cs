@@ -7,8 +7,8 @@ using Repository.Persistence;
 namespace EFCoreDemo {
     class Program {
         static void Main(string[] args) {
-            //DoCodeFirst();
-            DoQueries();
+            DoCodeFirst();
+            //DoQueries();
             //DoLoading();
             //DoEdit();
             //DoUnitOfWork();
@@ -17,8 +17,12 @@ namespace EFCoreDemo {
         static void DoCodeFirst() {
             using (var context = new CourseContext()) {
 
-                context.Database.Migrate();
+                //context.Database.Migrate();
 
+                var a = context.Authors.Include(x => x.Courses).First(x => x.Id == 1);
+                context.Courses.RemoveRange(a.Courses);
+                context.Authors.Remove(a);
+                context.SaveChanges();
 
                 var author = new Author() {
                     Name = "Thomas Kehl"
@@ -31,7 +35,11 @@ namespace EFCoreDemo {
 
                 context.Courses.Add(course);
 
+                var c2 = context.Courses.Single(x => x.Id == 2);
+                c2.FullPrice = 700;
 
+                var c3 = context.Courses.Single(x => x.Id == 10);
+                context.Courses.Remove(c3);
 
                 context.SaveChanges();
 
@@ -102,20 +110,43 @@ namespace EFCoreDemo {
         }
         static void DoQueries() {
             using (var context = new CourseContext()) {
+
+                // LINQ-QuerySyntax
                 var query =
                         from c in context.Courses
                         where c.Title.Contains("c#")
                         orderby c.FullPrice
                         select c;
 
-                // Extension Methods
-                //var query = context.Courses.Where(c => c.Author.Name.StartsWith("T")).OrderBy(c => c.FullPrice);
+                query = (IOrderedQueryable<Course>)query.Where(x => x.FullPrice > 10);
 
-                query = query.ThenByDescending(c => c.Level);
+                foreach (var c in query) {
+                    Console.WriteLine(c.Title);
+                }
+
+
+                // Extension Methods
+                var q = context.Courses
+                    .Where(x => x.Author.Name.StartsWith("T"))
+                    .OrderBy(x => x.FullPrice);
+
+                //if (onlyCoursesWithHashTag) {
+                //    q = (IOrderedQueryable<Course>)q.Where(x => x.Title.Contains("#"));
+                //}
+
+
+                var q1 = q.Where(x => x.Title.Contains("#"));
+
+                var query10 = 
+                    context.Courses
+                        .Where(c => c.Author.Name.StartsWith("T"))
+                        .OrderBy(c => c.FullPrice);
+
+                query10 = query10.ThenByDescending(c => c.Level);
 
                 //var list = query.SingleOrDefault();
 
-                foreach (var c in query) {
+                foreach (var c in query10) {
                     Console.WriteLine(c.Title);
                 }
 
@@ -168,6 +199,7 @@ namespace EFCoreDemo {
                 // Group: eine Liste von Objekte in eine oder mehrere Gruppen aufteilen
                 // -> funktioniert bei EFCore nicht mehr, Objekte herunterladen und dann 
                 //    lokal gruppieren -> siehe LINQ
+                // aaa
                 //var query31 =
                 //    from c in context.Courses
                 //    group c by c.Level
@@ -268,7 +300,18 @@ namespace EFCoreDemo {
                 //                https://stackoverflow.com/a/18920095/2042829
 
                 // Lazy Loading
-                var course = context.Courses.Single(c => c.Id == 2);
+
+
+
+
+
+
+                var course = context.Courses
+                    .Include(x => x.CourseTags)
+                    .ThenInclude(x => x.Tag)
+                    .Include(x => x.Author)
+                    .Include(x => x.Category)
+                    .Single(c => c.Id == 2);
                 Wait();
 
                 foreach (var courseTag in course.CourseTags) {
