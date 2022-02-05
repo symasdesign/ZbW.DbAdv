@@ -190,7 +190,7 @@ ORDER BY ID;
 
 
 --First N
-USE AdventureWorks2014;
+USE AdventureWorks2016;
 GO
 
 --What are the first four orders for each product?
@@ -199,6 +199,7 @@ SELECT SOD.ProductID, SOH.SalesOrderID,
 FROM Sales.SalesOrderHeader AS SOH 
 JOIN Sales.SalesOrderDetail AS SOD ON SOH.SalesOrderID = SOD.SalesOrderID
 WHERE SOH.OrderDate >= '2011-01-01' AND SOH.OrderDate < '2012-01-01';
+
 
 
 
