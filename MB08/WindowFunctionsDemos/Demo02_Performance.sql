@@ -9,6 +9,10 @@ USE PL_SampleData;
 GO
 SET STATISTICS IO ON 
 GO
+SET STATISTICS TIME ON;
+GO
+
+-- am besten beide Selects in einem Batch ausführen.
 SELECT TickerSymbol, TradeDate, ClosePrice,
 	ClosePrice - 
 	LAG(ClosePrice) OVER(PARTITION BY TickerSymbol ORDER BY TradeDate) AS Change
@@ -25,11 +29,8 @@ OUTER APPLY (
 		AND I.TradeDate < O.TradeDate
 	ORDER BY I.TradeDate) AS CA
 ORDER BY O.TickerSymbol, O.TradeDate;
+--------------------------------------
 
-SET STATISTICS IO OFF;
-GO
-SET STATISTICS TIME ON;
-Go
 
 CREATE TABLE #Stock1(TickerSymbol VARCHAR(4), TradeDate DATE, ClosePrice MONEY, Change MONEY);
 CREATE TABLE #Stock2(TickerSymbol VARCHAR(4), TradeDate DATE, ClosePrice MONEY, Change MONEY);
