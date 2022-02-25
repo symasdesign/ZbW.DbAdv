@@ -31,10 +31,13 @@ OUTER APPLY (
 ORDER BY O.TickerSymbol, O.TradeDate;
 --------------------------------------
 
+<<<<<<< HEAD
 SELECT *, 
      AVG(ClosePrice) OVER(PARTITION BY TickerSymbol ORDER BY TradeDate
 RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
  FROM dbo.StockHistory
+=======
+>>>>>>> main
 
 CREATE TABLE #Stock1(TickerSymbol VARCHAR(4), TradeDate DATE, ClosePrice MONEY, Change MONEY);
 CREATE TABLE #Stock2(TickerSymbol VARCHAR(4), TradeDate DATE, ClosePrice MONEY, Change MONEY);
